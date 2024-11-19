@@ -9,7 +9,7 @@ locals {
   ])
   # Flattens "iam" list of object list to list of objects
   flat_iam_list = flatten([
-    for iam_idx, iam in var.iam : [
+    for iam_idx, iam in local.iam : [
       for role_idx, member in iam.members : {
         role   = iam.role
         member = member
@@ -31,8 +31,7 @@ resource "google_cloud_run_v2_service" "cloud_run_v2" {
 
   # All of the following inputs are managed by Helmless chart and deployment.
   template {
-    execution_environment = "EXECUTION_ENVIRONMENT_GEN2"
-    service_account       = local.service_account
+    service_account = local.service_account
     containers {
       image = "us-docker.pkg.dev/cloudrun/container/hello"
     }

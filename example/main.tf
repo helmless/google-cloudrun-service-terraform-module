@@ -1,6 +1,6 @@
 module "github_federation" {
-  source = "ssh://git@github.com:helmless/google-workload-identity-federation-terraform-module.git"
-  id = "github"
+  source              = "ssh://git@github.com:helmless/google-workload-identity-federation-terraform-module.git"
+  id                  = "github"
   github_organization = "helmless"
 }
 

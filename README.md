@@ -17,12 +17,27 @@ asdf install
 
 <!-- BEGIN_TF_DOCS -->
 
+
 ## Usage
 
 ```hcl
 module "github_federation" {
-  source              = "ssh://git@github.com:helmless/google-workload-identity-federation-terraform-module.git?ref=v0.1.0" # x-release-please-version
+  source              = "ssh://git@github.com:helmless/google-workload-identity-federation-terraform-module.git"
+  id                  = "github"
   github_organization = "helmless"
+}
+
+module "cloudrun_service" {
+  source = "ssh://git@github.com:helmless/google-cloudrun-service-terraform-module.git?ref=v0.1.0" # x-release-please-version
+  name   = "example-service"
+
+  create_service_account = true
+  iam = [
+    {
+      role    = "roles/run.admin"
+      members = ["${module.github_federation.repository_principal_set_id_prefix}/example-repository"]
+    }
+  ]
 }
 ```
 
@@ -30,9 +45,9 @@ module "github_federation" {
 
 The following input variables are required:
 
-### <a name="input_github_organization"></a> [github_organization](#input_github_organization)
+### <a name="input_name"></a> [name](#input\_name)
 
-Description: The GitHub organization to bind to the workload identity pool and provider
+Description: The name of the Cloud Run service. Must be unique within the project and region.
 
 Type: `string`
 
@@ -40,47 +55,78 @@ Type: `string`
 
 The following input variables are optional (have default values):
 
-### <a name="input_id"></a> [id](#input_id)
+### <a name="input_create_service_account"></a> [create\_service\_account](#input\_create\_service\_account)
 
-Description: The id of the workload identity pool and provider
+Description: Whether to create a service account for the Cloud Run service with the same name as the service. If not provided, the default service account will be used.
+
+Type: `bool`
+
+Default: `false`
+
+### <a name="input_description"></a> [description](#input\_description)
+
+Description: An optional description of the Cloud Run service.
 
 Type: `string`
 
-Default: `"github"`
+Default: `""`
+
+### <a name="input_iam"></a> [iam](#input\_iam)
+
+Description: A list of IAM bindings to apply to the Cloud Run service.
+
+Type:
+
+```hcl
+list(object({
+    role    = string
+    members = list(string)
+  }))
+```
+
+Default: `[]`
+
+### <a name="input_labels"></a> [labels](#input\_labels)
+
+Description: Labels to apply to the Cloud Run service.
+
+Type: `map(string)`
+
+Default: `{}`
+
+### <a name="input_region"></a> [region](#input\_region)
+
+Description: The region to deploy the Cloud Run service to.
+
+Type: `string`
+
+Default: `"us-central1"`
+
+### <a name="input_service_account"></a> [service\_account](#input\_service\_account)
+
+Description: The service account to use for the Cloud Run service. If not provided, the default service account will be used.
+
+Type: `string`
+
+Default: `null`
 
 ## Outputs
 
-The following outputs are exported:
-
-### <a name="output_organization_principal_set_id"></a> [organization_principal_set_id](#output_organization_principal_set_id)
-
-Description: The principal set id for the GitHub organization to be used in IAM policies and bindings. Warning: this will grant all repositories in your Github organization the IAM role you bind this to. Use the repository_principal_set_id for more granular control.
-
-### <a name="output_pool_id"></a> [pool_id](#output_pool_id)
-
-Description: The id of the workload identity pool. Example: projects/1234567890/locations/global/workloadIdentityPools/github
-
-### <a name="output_provider_id"></a> [provider_id](#output_provider_id)
-
-Description: The id of the workload identity provider.
-
-### <a name="output_repository_principal_set_id_prefix"></a> [repository_principal_set_id_prefix](#output_repository_principal_set_id_prefix)
-
-Description: The principal set id for the GitHub repository to be used in IAM policies and bindings. You must append the repository name to this id to use it.
+No outputs.
 
 ## Requirements
 
 The following requirements are needed by this module:
 
-- <a name="requirement_terraform"></a> [terraform](#requirement_terraform) (>= 1.9.6, < 2)
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.9.6, < 2)
 
-- <a name="requirement_google"></a> [google](#requirement_google) (>= 5.0)
+- <a name="requirement_google"></a> [google](#requirement\_google) (>= 5.0)
 
 ## Providers
 
 The following providers are used by this module:
 
-- <a name="provider_google"></a> [google](#provider_google) (6.12.0)
+- <a name="provider_google"></a> [google](#provider\_google) (6.12.0)
 
 ## Modules
 
@@ -90,6 +136,8 @@ No modules.
 
 The following resources are used by this module:
 
-- [google_iam_workload_identity_pool.github](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/iam_workload_identity_pool) (resource)
-- [google_iam_workload_identity_pool_provider.github](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/iam_workload_identity_pool_provider) (resource)
+- [google_cloud_run_v2_service.cloud_run_v2](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloud_run_v2_service) (resource)
+- [google_cloud_run_v2_service_iam_binding.iam](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloud_run_v2_service_iam_binding) (resource)
+- [google_service_account.cloud_run_v2](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account) (resource)
+- [google_service_account_iam_member.cloud_run_v2](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account_iam_member) (resource)
 <!-- END_TF_DOCS -->
