@@ -9,10 +9,5 @@ module "cloudrun_service" {
   name   = "example-service"
 
   create_service_account = true
-  iam = [
-    {
-      role    = "roles/run.admin"
-      members = ["${module.github_federation.repository_principal_set_id_prefix}/example-repository"]
-    }
-  ]
+  deployment_accounts    = ["${module.github_federation.repository_principal_set_id_prefix}/example-repository"]
 }
