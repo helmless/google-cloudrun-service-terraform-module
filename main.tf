@@ -1,15 +1,10 @@
 locals {
-  service_account = var.create_service_account ? google_service_account.cloud_run_v2[0].email : var.service_account
+  service_account     = var.create_service_account ? google_service_account.cloud_run_v2[0].email : var.service_account
+  deployment_accounts = concat(var.deployment_accounts, ["serviceAccount:${local.service_account}"])
 
-  iam = concat(var.iam, [
-    {
-      role    = "roles/run.admin"
-      members = ["serviceAccount:${local.service_account}"]
-    }
-  ])
   # Flattens "iam" list of object list to list of objects
   flat_iam_list = flatten([
-    for iam_idx, iam in local.iam : [
+    for iam_idx, iam in var.iam : [
       for role_idx, member in iam.members : {
         role   = iam.role
         member = member
@@ -60,11 +55,19 @@ resource "google_service_account" "cloud_run_v2" {
 }
 
 resource "google_service_account_iam_member" "cloud_run_v2" {
-  count = var.create_service_account ? 1 : 0
+  for_each = toset(var.deployment_accounts)
 
   service_account_id = google_service_account.cloud_run_v2[0].name
   role               = "roles/iam.workloadIdentityUser"
-  member             = var.service_account
+  member             = each.value
+}
+
+resource "google_cloud_run_v2_service_iam_member" "deployment_accounts" {
+  for_each = toset(local.deployment_accounts)
+
+  name   = google_cloud_run_v2_service.cloud_run_v2.name
+  role   = "roles/run.admin"
+  member = each.value
 }
 
 resource "google_cloud_run_v2_service_iam_binding" "iam" {

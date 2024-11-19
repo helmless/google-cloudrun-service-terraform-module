@@ -33,6 +33,12 @@ variable "create_service_account" {
   default     = false
 }
 
+variable "deployment_accounts" {
+  description = "A list of accounts that are allowed to deploy the Cloud Run service. Must be in the format of 'serviceAccount:ACCOUNT_EMAIL' or principalSet:PRINCIPAL_SET_ID. The accounts will get the roles/run.admin role on the Cloud Run service and the roles/iam.workloadIdentityUser role on the service account."
+  type        = list(string)
+  default     = []
+}
+
 variable "iam" {
   description = "A list of IAM bindings to apply to the Cloud Run service."
   type = list(object({

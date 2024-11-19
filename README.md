@@ -63,6 +63,14 @@ Type: `bool`
 
 Default: `false`
 
+### <a name="input_deployment_accounts"></a> [deployment\_accounts](#input\_deployment\_accounts)
+
+Description: A list of accounts that are allowed to deploy the Cloud Run service. Must be in the format of 'serviceAccount:ACCOUNT\_EMAIL' or principalSet:PRINCIPAL\_SET\_ID. The accounts will get the roles/run.admin role on the Cloud Run service and the roles/iam.workloadIdentityUser role on the service account.
+
+Type: `list(string)`
+
+Default: `[]`
+
 ### <a name="input_description"></a> [description](#input\_description)
 
 Description: An optional description of the Cloud Run service.
@@ -138,6 +146,7 @@ The following resources are used by this module:
 
 - [google_cloud_run_v2_service.cloud_run_v2](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloud_run_v2_service) (resource)
 - [google_cloud_run_v2_service_iam_binding.iam](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloud_run_v2_service_iam_binding) (resource)
+- [google_cloud_run_v2_service_iam_member.deployment_accounts](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloud_run_v2_service_iam_member) (resource)
 - [google_service_account.cloud_run_v2](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account) (resource)
 - [google_service_account_iam_member.cloud_run_v2](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account_iam_member) (resource)
 <!-- END_TF_DOCS -->
