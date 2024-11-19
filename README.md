@@ -22,13 +22,13 @@ asdf install
 
 ```hcl
 module "github_federation" {
-  source              = "ssh://git@github.com:helmless/google-workload-identity-federation-terraform-module.git"
+  source              = "github.com/helmless/google-workload-identity-federation-terraform-module"
   id                  = "github"
   github_organization = "helmless"
 }
 
 module "cloudrun_service" {
-  source = "ssh://git@github.com:helmless/google-cloudrun-service-terraform-module.git?ref=v0.1.0" # x-release-please-version
+  source = "github.com/helmless/google-cloudrun-service-terraform-module"
   name   = "example-service"
 
   create_service_account = true
