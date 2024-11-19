@@ -1,6 +1,8 @@
 locals {
-  service_account     = var.create_service_account ? google_service_account.cloud_run_v2[0].email : var.service_account
-  deployment_accounts = concat(var.deployment_accounts, ["serviceAccount:${local.service_account}"])
+  service_account = var.create_service_account ? google_service_account.cloud_run_v2[0].email : var.service_account
+  deployment_accounts = {
+    for idx, account in concat(var.deployment_accounts, ["serviceAccount:${local.service_account}"]) : idx => account
+  }
 
   # Flattens "iam" list of object list to list of objects
   flat_iam_list = flatten([
