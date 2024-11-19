@@ -45,7 +45,9 @@ resource "google_cloud_run_v2_service" "cloud_run_v2" {
       client_version,
       description,
     ]
+    prevent_destroy = var.deletion_protection
   }
+  deletion_protection = var.deletion_protection
 }
 
 resource "google_service_account" "cloud_run_v2" {

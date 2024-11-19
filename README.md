@@ -63,6 +63,14 @@ Type: `bool`
 
 Default: `false`
 
+### <a name="input_deletion_protection"></a> [deletion\_protection](#input\_deletion\_protection)
+
+Description: Whether to enable deletion protection for the Cloud Run service.
+
+Type: `bool`
+
+Default: `true`
+
 ### <a name="input_deployment_accounts"></a> [deployment\_accounts](#input\_deployment\_accounts)
 
 Description: A list of accounts that are allowed to deploy the Cloud Run service. Must be in the format of 'serviceAccount:ACCOUNT\_EMAIL' or principalSet:PRINCIPAL\_SET\_ID. The accounts will get the roles/run.admin role on the Cloud Run service and the roles/iam.workloadIdentityUser role on the service account.

@@ -47,3 +47,9 @@ variable "iam" {
   }))
   default = []
 }
+
+variable "deletion_protection" {
+  description = "Whether to enable deletion protection for the Cloud Run service."
+  type        = bool
+  default     = true
+}
