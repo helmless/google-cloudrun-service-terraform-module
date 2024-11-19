@@ -36,7 +36,6 @@ resource "google_cloud_run_v2_service" "cloud_run_v2" {
   lifecycle {
     ignore_changes = [
       template,
-      location,
       ingress,
       launch_stage,
       labels,
@@ -67,15 +66,17 @@ resource "google_service_account_iam_member" "cloud_run_v2" {
 resource "google_cloud_run_v2_service_iam_member" "deployment_accounts" {
   for_each = local.deployment_accounts
 
-  name   = google_cloud_run_v2_service.cloud_run_v2.name
-  role   = "roles/run.admin"
-  member = each.value
+  name     = google_cloud_run_v2_service.cloud_run_v2.name
+  location = var.region
+  role     = "roles/run.admin"
+  member   = each.value
 }
 
 resource "google_cloud_run_v2_service_iam_binding" "iam" {
   for_each = local.flat_iam_map
 
-  name    = google_cloud_run_v2_service.cloud_run_v2.name
-  role    = each.value.role
-  members = each.value.members
+  name     = google_cloud_run_v2_service.cloud_run_v2.name
+  location = var.region
+  role     = each.value.role
+  members  = each.value.members
 }
