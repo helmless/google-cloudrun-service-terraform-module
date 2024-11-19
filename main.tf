@@ -57,7 +57,7 @@ resource "google_service_account" "cloud_run_v2" {
 }
 
 resource "google_service_account_iam_member" "cloud_run_v2" {
-  for_each = toset(var.deployment_accounts)
+  for_each = var.deployment_accounts
 
   service_account_id = google_service_account.cloud_run_v2[0].name
   role               = "roles/iam.workloadIdentityUser"
@@ -65,7 +65,7 @@ resource "google_service_account_iam_member" "cloud_run_v2" {
 }
 
 resource "google_cloud_run_v2_service_iam_member" "deployment_accounts" {
-  for_each = toset(local.deployment_accounts)
+  for_each = local.deployment_accounts
 
   name   = google_cloud_run_v2_service.cloud_run_v2.name
   role   = "roles/run.admin"
