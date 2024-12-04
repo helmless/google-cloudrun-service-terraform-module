@@ -60,7 +60,7 @@ resource "google_service_account_iam_member" "cloud_run_v2" {
   for_each = local.deployment_accounts
 
   service_account_id = google_service_account.cloud_run_v2[0].name
-  role               = "roles/iam.workloadIdentityUser"
+  role               = "roles/iam.serviceAccountUser"
   member             = each.value
 }
 
