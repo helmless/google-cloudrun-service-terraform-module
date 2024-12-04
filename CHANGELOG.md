@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.1](https://github.com/helmless/google-cloudrun-service-terraform-module/compare/v0.1.0...v0.1.1) (2024-12-04)
+
+
+### Bug Fixes
+
+* **example:** use local module ref in example ([65f4755](https://github.com/helmless/google-cloudrun-service-terraform-module/commit/65f475506bf5b4f651c7c82e63bd9bdf24c8fd90))
+* **iam:** use correct serviceAccountUser role with actAs for deployments ([5728e30](https://github.com/helmless/google-cloudrun-service-terraform-module/commit/5728e30f0999d26dacf6997af3a0bf81fc50e65f))
+
 ## 0.1.0 (2024-11-19)
 
 
