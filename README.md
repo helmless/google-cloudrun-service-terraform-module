@@ -28,7 +28,7 @@ module "github_federation" {
 }
 
 module "cloudrun_service" {
-  # source = "github.com/helmless/google-cloudrun-service-terraform-module?ref=v0.1.1" # x-release-please-version
+  # source = "github.com/helmless/google-cloudrun-service-terraform-module?ref=v0.1.2" # x-release-please-version
   source = "../"
   name   = "example-service"
 
