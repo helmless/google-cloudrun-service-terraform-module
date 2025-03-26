@@ -154,7 +154,7 @@ The following requirements are needed by this module:
 
 The following providers are used by this module:
 
-- <a name="provider_google"></a> [google](#provider\_google) (6.12.0)
+- <a name="provider_google"></a> [google](#provider\_google) (6.27.0)
 
 ## Modules
 
