@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.2](https://github.com/helmless/google-cloudrun-service-terraform-module/compare/v0.1.1...v0.1.2) (2025-03-26)
+
+
+### Bug Fixes
+
+* **deps:** update Google provider from 6.12.0 to 6.27.0 ([#5](https://github.com/helmless/google-cloudrun-service-terraform-module/issues/5)) ([9cda275](https://github.com/helmless/google-cloudrun-service-terraform-module/commit/9cda275c50df246789264a5b3f432943d27bf419))
+* ignore terraform lock ([#6](https://github.com/helmless/google-cloudrun-service-terraform-module/issues/6)) ([d54081e](https://github.com/helmless/google-cloudrun-service-terraform-module/commit/d54081e792e028d42d12d68e90a4b3cce5d623c3))
+* service account and iam permission handling ([#3](https://github.com/helmless/google-cloudrun-service-terraform-module/issues/3)) ([d51299d](https://github.com/helmless/google-cloudrun-service-terraform-module/commit/d51299d7a479f24ce54d619618b94daaddec77d1))
+
 ## [0.1.1](https://github.com/helmless/google-cloudrun-service-terraform-module/compare/v0.1.0...v0.1.1) (2024-12-04)
 
 
