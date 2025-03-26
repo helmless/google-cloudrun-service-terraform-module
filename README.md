@@ -57,7 +57,7 @@ Description: Whether to create a service account for the Cloud Run service with 
 
 Type: `bool`
 
-Default: `false`
+Default: `true`
 
 ### <a name="input_deletion_protection"></a> [deletion\_protection](#input\_deletion\_protection)
 
@@ -106,6 +106,14 @@ Type: `map(string)`
 
 Default: `{}`
 
+### <a name="input_project"></a> [project](#input\_project)
+
+Description: The project to deploy the Cloud Run service to.
+
+Type: `string`
+
+Default: `null`
+
 ### <a name="input_region"></a> [region](#input\_region)
 
 Description: The region to deploy the Cloud Run service to.
@@ -114,9 +122,9 @@ Type: `string`
 
 Default: `"us-central1"`
 
-### <a name="input_service_account"></a> [service\_account](#input\_service\_account)
+### <a name="input_service_account_email"></a> [service\_account\_email](#input\_service\_account\_email)
 
-Description: The service account to use for the Cloud Run service. If not provided, the default service account will be used.
+Description: The service account email to use for the Cloud Run service. If not provided, the default service account will be used.
 
 Type: `string`
 
@@ -124,7 +132,15 @@ Default: `null`
 
 ## Outputs
 
-No outputs.
+The following outputs are exported:
+
+### <a name="output_cloud_run_service"></a> [cloud\_run\_service](#output\_cloud\_run\_service)
+
+Description: The full Cloud Run service object and all attributes.
+
+### <a name="output_service_account"></a> [service\_account](#output\_service\_account)
+
+Description: The service account used by the Cloud Run service. Uses the provided service account if create\_service\_account is false, otherwise creates a new service account.
 
 ## Requirements
 
@@ -148,9 +164,11 @@ No modules.
 
 The following resources are used by this module:
 
-- [google_cloud_run_v2_service.cloud_run_v2](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloud_run_v2_service) (resource)
-- [google_cloud_run_v2_service_iam_binding.iam](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloud_run_v2_service_iam_binding) (resource)
-- [google_cloud_run_v2_service_iam_member.deployment_accounts](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloud_run_v2_service_iam_member) (resource)
-- [google_service_account.cloud_run_v2](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account) (resource)
-- [google_service_account_iam_member.cloud_run_v2](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account_iam_member) (resource)
+- [google_cloud_run_v2_service.cloud_run_service](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloud_run_v2_service) (resource)
+- [google_cloud_run_v2_service_iam_binding.custom_iam](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloud_run_v2_service_iam_binding) (resource)
+- [google_cloud_run_v2_service_iam_member.run_admin](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloud_run_v2_service_iam_member) (resource)
+- [google_service_account.cloud_run_service_account](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account) (resource)
+- [google_service_account_iam_member.service_account_user](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account_iam_member) (resource)
+- [google_project.current](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/project) (data source)
+- [google_service_account.cloud_run_service_account](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/service_account) (data source)
 <!-- END_TF_DOCS -->

@@ -1,38 +1,34 @@
 locals {
-  service_account = var.create_service_account ? google_service_account.cloud_run_v2[0].email : var.service_account
-  deployment_accounts = {
-    for idx, account in concat(var.deployment_accounts, ["serviceAccount:${local.service_account}"]) : idx => account
+  deployment_accounts = concat(["serviceAccount:${local.service_account.email}"], var.deployment_accounts)
+
+  # Creates a map of iam_role -> members keyed by the role
+  iam_map = {
+    for iam in var.iam : iam.role => { members = iam.members }
   }
 
-  # Flattens "iam" list of object list to list of objects
-  flat_iam_list = flatten([
-    for iam_idx, iam in var.iam : [
-      for role_idx, member in iam.members : {
-        role   = iam.role
-        member = member
-      }
-    ]
-  ])
-
-  # Transforms flattened list to object map
-  flat_iam_map = {
-    for idx, flat_iam in local.flat_iam_list : idx => flat_iam
-  }
+  project         = var.project != null ? var.project : data.google_project.current.project_id
+  service_account = var.create_service_account ? google_service_account.cloud_run_service_account[0] : data.google_service_account.cloud_run_service_account[0]
 }
 
-resource "google_cloud_run_v2_service" "cloud_run_v2" {
+data "google_project" "current" {}
+
+resource "google_cloud_run_v2_service" "cloud_run_service" {
   name        = var.name
   description = var.description
   location    = var.region
   labels      = var.labels
 
+  deletion_protection = var.deletion_protection
+
   # All of the following inputs are managed by Helmless chart and deployment.
   template {
-    service_account = local.service_account
+    service_account = local.service_account.email
     containers {
       image = "us-docker.pkg.dev/cloudrun/container/hello"
     }
   }
+
+  # This will make the app pipeline with Helmless the authoritive source of truth for the service.
   lifecycle {
     ignore_changes = [
       template,
@@ -46,38 +42,45 @@ resource "google_cloud_run_v2_service" "cloud_run_v2" {
       description,
     ]
   }
-  deletion_protection = var.deletion_protection
 }
 
-resource "google_service_account" "cloud_run_v2" {
+data "google_service_account" "cloud_run_service_account" {
+  count = var.create_service_account ? 0 : 1
+
+  account_id = var.service_account_email
+  project    = local.project
+}
+
+resource "google_service_account" "cloud_run_service_account" {
   count = var.create_service_account ? 1 : 0
 
   account_id   = var.name
   display_name = var.name
+  project      = local.project
 }
 
-resource "google_service_account_iam_member" "cloud_run_v2" {
-  for_each = local.deployment_accounts
+resource "google_service_account_iam_member" "service_account_user" {
+  count = length(local.deployment_accounts)
 
-  service_account_id = google_service_account.cloud_run_v2[0].name
+  service_account_id = local.service_account.id
   role               = "roles/iam.serviceAccountUser"
-  member             = each.value
+  member             = local.deployment_accounts[count.index]
 }
 
-resource "google_cloud_run_v2_service_iam_member" "deployment_accounts" {
-  for_each = local.deployment_accounts
+resource "google_cloud_run_v2_service_iam_member" "run_admin" {
+  count = length(local.deployment_accounts)
 
-  name     = google_cloud_run_v2_service.cloud_run_v2.name
+  name     = google_cloud_run_v2_service.cloud_run_service.name
   location = var.region
   role     = "roles/run.admin"
-  member   = each.value
+  member   = local.deployment_accounts[count.index]
 }
 
-resource "google_cloud_run_v2_service_iam_binding" "iam" {
-  for_each = local.flat_iam_map
+resource "google_cloud_run_v2_service_iam_binding" "custom_iam" {
+  for_each = local.iam_map
 
-  name     = google_cloud_run_v2_service.cloud_run_v2.name
+  name     = google_cloud_run_v2_service.cloud_run_service.name
   location = var.region
-  role     = each.value.role
+  role     = each.key
   members  = each.value.members
 }
